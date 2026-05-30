@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Technical Assessment
 
-## Getting Started
+This project is a modern, responsive web application built with Next.js, Material-UI (MUI), and Zustand. It integrates with the [DummyJSON API](https://dummyjson.com/) to provide user authentication, and data for users and products.
 
-First, run the development server:
+## Technologies Used
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+* **Framework:** Next.js (App Router, TypeScript)
+* **UI Library:** Material-UI (MUI) v5
+* **State Management:** Zustand
+* **Authentication:** NextAuth.js (Credentials Provider)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Why Zustand?
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Zustand was chosen for state management because it provides a much simpler and less boilerplate-heavy alternative to Redux. It has a tiny footprint and handles async actions out-of-the-box without needing middleware like Redux Thunk or Saga. For a small to medium-sized application like this, Zustand offers an excellent developer experience while easily satisfying all data management and client-side caching requirements.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup Instructions
 
-## Learn More
+1. **Clone the repository** (or use the provided directory).
+2. **Navigate to the project folder:**
+   ```bash
+   cd frontend-assessment
+   ```
+3. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+4. **Environment Variables:**
+   You don't strictly need a `.env` file since this uses DummyJSON, but for NextAuth in production you must set a secret. You can optionally create a `.env.local` file at the root:
+   ```
+   NEXTAUTH_SECRET=your_super_secret_key
+   NEXTAUTH_URL=http://localhost:3000
+   ```
+5. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+6. **Open [http://localhost:3000](http://localhost:3000)** in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+## Login Details
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Use any user from the DummyJSON users endpoint to log in. For example:
+* **Username:** `emilys`
+* **Password:** `emilyspass`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Architecture Highlights
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* **Caching:** Zustand stores (`useUsersStore` and `useProductsStore`) implement a caching strategy by indexing API responses with query parameters. This avoids repeating network requests if a user navigates between previously loaded pages.
+* **Performance:** `React.memo` is used for individual item cards (`UserCard` and `ProductCard`) to prevent unnecessary re-renders. `useCallback` is used for event handlers like pagination.
+* **Authentication Sync:** NextAuth handles the secure session cookie, and a helper component (`SessionSync`) mirrors the token into the Zustand `useAuthStore` as requested.
